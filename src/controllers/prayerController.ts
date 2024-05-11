@@ -38,23 +38,20 @@ export const getOnePrayer: RequestHandler = async (req, res, next) => {
 }
 
 export const addPrayer: RequestHandler = async (req, res, next) => {
-    console.log(req.body);
-    
-    res.json(req.body);
 
-    // try {
-    //     const newReq: IPrayer = new Prayer({
-    //         prayerReq: req.body.prayerReq, 
-    //         postDate: new Date()
-    //     });
+    try {
+        const newReq: IPrayer = new Prayer({
+            prayerReq: req.body.prayerReq, 
+            postDate: new Date()
+        });
 
-    //     const savedReq = await newReq.save();
-    //     res.status(201).json(savedReq); 
+        const savedReq = await newReq.save();
+        res.status(201).json(savedReq); 
 
-    // } catch (error) {
-    //     console.error("Error adding new prayer request:", error);
-    //     res.status(500).json({ message: 'Internal Server Error' });
-    // }
+    } catch (error) {
+        console.error("Error adding new prayer request:", error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
 }
 
 export const editPrayer: RequestHandler = async (req, res, next) => {

@@ -1,14 +1,12 @@
-const express = require('express');
-const morgan = require('morgan');
-const mongoose = require('mongoose');
-//const prayerRoutes = require('./routes/prayerRoutes');
-// const userRoutes = require('./routes/userRoutes');
-
+import express, { NextFunction, Request, Response } from 'express'
+import morgan from 'morgan';
+import mongoose from 'mongoose';
 import prayerRoutes from './routes/prayerRoutes';
+// import userRoutes from './routes/userRoutes';
 
 
 const app = express();
-const SERVER_PORT = process.env.PORT || 3000;
+const SERVER_PORT = 3000;
 
 const connectionString: string = 'mongodb://localhost:27017/testDB';
 
@@ -18,9 +16,8 @@ mongoose.connect(connectionString).then(
 
 
 app.use(morgan('dev'));
-// const bodyParser = require('body-parser');
-// mongoose.connect(db_url, { useNewUrlParser: true });
-// app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 
 // routes
