@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from 'express'
 import morgan from 'morgan';
 import mongoose from 'mongoose';
 import prayerRoutes from './routes/prayerRoutes';
-// import userRoutes from './routes/userRoutes';
+import userRoutes from './routes/userRoutes';
 
 
 const app = express();
@@ -22,7 +22,7 @@ app.use(express.urlencoded({extended: true}));
 
 // routes
 app.use('/api/prayer', prayerRoutes);
-// app.use('/api/user', userRoutes);
+app.use('/api/user', userRoutes);
 
 app.use('/api/home', (req: any, res: any) => {
     res.json({ message: "Hello World" })
