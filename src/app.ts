@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import mongoose from 'mongoose';
 import prayerRoutes from './routes/prayerRoutes';
 import userRoutes from './routes/userRoutes';
+import testimonyRoutes from './routes/testimonyRoutes';
 
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(express.urlencoded({extended: true}));
 
 // routes
 app.use('/api/prayer', prayerRoutes);
+app.use('/api/testimony', testimonyRoutes);
 app.use('/api/user', userRoutes);
 
 app.use('/api/home', (req: any, res: any) => {

@@ -21,7 +21,7 @@ export const getAllPrayers: RequestHandler = async (req, res, next) => {
 
 export const getOnePrayer: RequestHandler = async (req, res, next) => {
     try {
-        let reqId = req.params.id;
+        let reqId = req.params.prayer_id;
 
         let thisReq = await Prayer.findById(reqId);
 
@@ -40,7 +40,11 @@ export const getOnePrayer: RequestHandler = async (req, res, next) => {
 export const addPrayer: RequestHandler = async (req, res, next) => {
 
     try {
+
+        let allReq = await Prayer.find();
+
         const newReq: IPrayer = new Prayer({
+            prayer_id: allReq.length + 1,
             prayerReq: req.body.prayerReq, 
             postDate: new Date()
         });
@@ -56,7 +60,7 @@ export const addPrayer: RequestHandler = async (req, res, next) => {
 
 export const editPrayer: RequestHandler = async (req, res, next) => {
     try {
-        let reqId = req.params._id;
+        let reqId = req.params.prayer_id;
 
         const updatedReq: IPrayer = new Prayer({
             prayerReq: req.body.prayerReq, 
@@ -72,7 +76,7 @@ export const editPrayer: RequestHandler = async (req, res, next) => {
 
 export const deletePrayer: RequestHandler = async (req, res, next) => {
     try {
-        let reqId = req.params.id;
+        let reqId = req.params.prayer_id;
 
         let deleted = await Prayer.findByIdAndDelete(reqId)
 
