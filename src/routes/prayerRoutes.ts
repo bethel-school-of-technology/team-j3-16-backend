@@ -4,9 +4,9 @@ import { addPrayer, deletePrayer, editPrayer, getAllPrayers, getOnePrayer } from
 const router = Router();
 
 router.get('/', getAllPrayers);
-router.get('/:prayer_id', getOnePrayer);
+router.get('/:prayerId', getOnePrayer);
 router.post('/', addPrayer);
-router.put('/:prayer_id', editPrayer);
-router.delete('/:prayer_id', deletePrayer);
+router.put('/:prayerId', editPrayer);
+router.delete('/:prayerId', deletePrayer);
 
 export default router;
