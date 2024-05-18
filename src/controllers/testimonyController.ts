@@ -89,16 +89,20 @@ export const editTestimony: RequestHandler = async (req, res, next) => {
 
 export const deleteTestimony: RequestHandler = async (req, res, next) => {
     try {
-        let testyId = req.params.testyId;
-
-        let deleted = await Testimony.findOneAndDelete({ testyId: testyId})
-
-        if (deleted) {
-            res.status(200).json('Testimony successfully deleted');
+        let user = await verifyUser(req);
+        if (!user) {
+            return res.status(403).json({ error: 'User not authenticated' });
         } else {
-            res.status(404).render('error', { message: 'Cannot find testimony'})
-        }
-   
+            let testyId = req.params.testyId;
+
+            let deleted = await Testimony.findOneAndDelete({ testyId: testyId})
+
+            if (deleted) {
+                res.status(200).json('Testimony successfully deleted');
+            } else {
+                res.status(404).render('error', { message: 'Cannot find testimony'})
+            }
+    }
 } catch (error) {
     console.error("Error fetching testimony:", error);
     return res.status(500).json({ message: 'Internal Server Error' });
