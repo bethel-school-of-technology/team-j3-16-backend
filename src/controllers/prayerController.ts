@@ -1,5 +1,7 @@
 import { RequestHandler } from "express";
 import { IPrayer, Prayer } from "../models/prayer";
+import { verifyUser } from "../services/auth";
+import { IUser } from "../models/user";
 
 
 export const getAllPrayers: RequestHandler = async (req, res, next) => {
@@ -21,9 +23,11 @@ export const getAllPrayers: RequestHandler = async (req, res, next) => {
 
 export const getOnePrayer: RequestHandler = async (req, res, next) => {
     try {
+        let userId = req.params.postedBy; 
         let prayerId = req.params.prayerId;
 
-        let thisReq = await Prayer.findOne({ prayerId: prayerId });
+        let thisReq = await Prayer.findOne({ postedBy: userId, prayerId: prayerId });
+        console.log(userId);
 
         if (thisReq) {
             return res.status(200).json(thisReq);
@@ -36,17 +40,24 @@ export const getOnePrayer: RequestHandler = async (req, res, next) => {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }
+  
 
 export const addPrayer: RequestHandler = async (req, res, next) => {
 
     try {
+        let user = await verifyUser(req);
+        if (!user) {
+            return res.status(403).json({ error: 'User not authenticated' });
+        }
+        console.log(user);
 
         let allReq = await Prayer.find();
 
-        const newReq: IPrayer = new Prayer({
+        const newReq = new Prayer({
             prayerId: allReq.length + 1,
             prayerReq: req.body.prayerReq, 
-            postDate: new Date()
+            postDate: new Date(),
+            postedBy: user.userId
         });
 
         const savedReq = await newReq.save();
@@ -60,13 +71,21 @@ export const addPrayer: RequestHandler = async (req, res, next) => {
 
 export const editPrayer: RequestHandler = async (req, res, next) => {
     try {
-        let reqId = req.params.prayerId;
+        let user = await verifyUser(req);
+        if (!user) {
+            return res.status(403).json({ error: 'User not authenticated' });
+        } else {
+            
+        let { prayerId } = req.params;
 
-        const updatedReq: IPrayer = new Prayer({
-            prayerReq: req.body.prayerReq, 
-            postDate: Date
-        });
-        res.status(201).json(updatedReq); 
+        const updatedReq: Partial<IPrayer> = {
+            prayerReq: req.body.prayerReq
+        };
+
+        let edited = await Prayer.findOneAndUpdate( {prayerId: prayerId}, updatedReq, { new: true })
+        res.status(201).json(edited); 
+        }
+
 
     } catch (error) {
         console.error("Error adding new prayer request:", error);
@@ -76,19 +95,25 @@ export const editPrayer: RequestHandler = async (req, res, next) => {
 
 export const deletePrayer: RequestHandler = async (req, res, next) => {
     try {
-        let prayerId = req.params.prayerId;
-        console.log(prayerId);
-
-        let deleted = await Prayer.findOneAndDelete({ prayerId: prayerId })
-
-        if (deleted) {
-            res.status(200).json('Request successfully deleted');
+        let user = await verifyUser(req);
+        if (!user) {
+            return res.status(403).json({ error: 'User not authenticated' });
         } else {
-            res.status(404).render('error', { message: 'Cannot find request'})
+
+            let userId = req.params.userId;
+            let prayerId = req.params.prayerId;
+
+            let deleted = await Prayer.findOneAndDelete({ prayerId: prayerId })
+
+            if (deleted) {
+                res.status(200).json('Request successfully deleted');
+            } else {
+                res.status(404).render('error', { message: 'Cannot find request'})
+            }
         }
    
-} catch (error) {
-    console.error("Error fetching prayer request:", error);
-    return res.status(500).json({ message: 'Internal Server Error' });
-}
+    } catch (error) {
+        console.error("Error fetching prayer request:", error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
 }

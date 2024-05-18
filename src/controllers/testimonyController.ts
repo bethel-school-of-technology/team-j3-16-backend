@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import { ITestimony, Testimony } from "../models/testimony";
+import { verifyUser } from "../services/auth";
 
 
 
@@ -22,9 +23,10 @@ export const allTestimonies: RequestHandler = async (req, res, next) => {
 
 export const getOneTestimony: RequestHandler = async (req, res, next) => {
     try {
+        let userId = req.params.postedBy;
         let testyId = req.params.testyId;
 
-        let thisTesty = await Testimony.findOne({ testyId: testyId });
+        let thisTesty = await Testimony.findOne({ postedBy: userId, testyId: testyId });
 
         if (thisTesty) {
             return res.status(200).json(thisTesty);
@@ -41,13 +43,18 @@ export const getOneTestimony: RequestHandler = async (req, res, next) => {
 export const addTestimony: RequestHandler = async (req, res, next) => {
 
     try {
+        let user = await verifyUser(req);
+        if (!user) {
+            return res.status(403).json({ error: 'User not authenticated' });
+        }
 
         let allTesty = await Testimony.find();
 
-        const newTesty: ITestimony = new Testimony({
+        const newTesty = new Testimony({
             testyId: allTesty.length + 1,
             testimony: req.body.testimony, 
-            testyDate: new Date()
+            testyDate: new Date(),
+            postedBy: user.userId
         });
 
         const savedTesti = await newTesty.save();
@@ -61,14 +68,19 @@ export const addTestimony: RequestHandler = async (req, res, next) => {
 
 export const editTestimony: RequestHandler = async (req, res, next) => {
     try {
+        let user = await verifyUser(req);
+        if (!user) {
+            return res.status(403).json({ error: 'User not authenticated' });
+        } else {
+
         let testyId = req.params.testyId;
 
-        const updated: ITestimony = new Testimony({
-            testimony: req.body.testimony, 
-            testyDate: new Date()
-        });
-        res.status(201).json(updated); 
-
+        const updatedTesty: Partial<ITestimony> = {
+            testimony: req.body.testimony
+        };
+        let edited = await Testimony.findOneAndUpdate( {testyId: testyId}, updatedTesty, { new: true })
+        res.status(201).json(edited); 
+        }
     } catch (error) {
         console.error("Error editing testimony:", error);
         res.status(500).json({ message: 'Internal Server Error' });
