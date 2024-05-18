@@ -4,7 +4,7 @@ import { addTestimony, allTestimonies, deleteTestimony, editTestimony, getOneTes
 const router = Router();
 
 router.get('/', allTestimonies);
-router.get('/:testyId', getOneTestimony);
+router.get('/:postedBy/:testyId', getOneTestimony);
 router.post('/', addTestimony);
 router.put('/:testyId', editTestimony);
 router.delete('/:testyId', deleteTestimony);

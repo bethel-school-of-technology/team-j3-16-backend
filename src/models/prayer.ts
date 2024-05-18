@@ -1,13 +1,20 @@
-import { Date, Document, Model, Schema, Types, model } from 'mongoose';
+import mongoose, { Date, Document, Model, Schema, Types, model } from 'mongoose';
 
 interface IPrayer extends Document {
-    prayerId: Number;
+    prayerId: number;
     prayerReq: string;
     postDate: Date;
+    postedBy: number;
 }
 
 
 const prayerSchema: Schema = new Schema({
+    postedBy: {
+        type: Number,
+        required: true,
+        ref: "User"
+        
+    },
     prayerId: {
         type: Number,
         autoIncrement: true,
@@ -25,5 +32,10 @@ const prayerSchema: Schema = new Schema({
 
 
 const Prayer: Model<IPrayer> = model<IPrayer>('Prayer', prayerSchema);
+
+Prayer.find()
+.populate("postedBy")
+.then(prayers => console.log(prayers))
+.catch(error=>console.log(error));
 
 export { IPrayer, Prayer };
