@@ -10,7 +10,7 @@ export const allTestimonies: RequestHandler = async (req, res, next) => {
         let allTesty = await Testimony.find();
 
         if (allTesty.length === 0) {
-            return res.status(404).json({ message: 'No testimonies found - please add one.' });
+            return res.status(200).json({ message: 'No testimonies found - please add one.' });
         } else {
             
             return res.status(200).json(allTesty);

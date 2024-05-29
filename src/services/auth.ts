@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user';
@@ -33,8 +33,9 @@ export const verifyUser = async (req: Request) => {
         const token = authHeader.split(' ')[1];
 
         try {
-            let decoded: any = await jwt.verify(token, secret);
+            let decoded: any = jwt.verify(token, secret);
             return User.findOne({ userId: decoded.userId });
+           
         } catch (err) {
             return null;
         }

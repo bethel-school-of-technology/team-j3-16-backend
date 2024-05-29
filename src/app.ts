@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import prayerRoutes from './routes/prayerRoutes';
 import userRoutes from './routes/userRoutes';
 import testimonyRoutes from './routes/testimonyRoutes';
+import cors from 'cors';
 
 
 const app = express();
@@ -16,6 +17,7 @@ mongoose.connect(connectionString).then(
     err => console.log('Error connecting to the database', err));
 
 
+app.use(cors())
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));

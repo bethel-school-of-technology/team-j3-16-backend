@@ -10,9 +10,6 @@ export const register: RequestHandler = async (req, res, next) => {
 
     let allUsers = await User.find();
 
-    // let hashedPassword = await hashPassword(newUser.password);
-    //         newUser.password = hashedPassword;
-
     const newUser: IUser = new User({
 
         userId: allUsers.length + 1,
@@ -98,7 +95,7 @@ export const allUsers: RequestHandler = async (req, res, next) => {
 export const findUser: RequestHandler = async (req, res, next) => {
 
   try {
-    const { userId  }= req.params;
+    const { userId } = req.params;
 
     const searchUser = await User.findOne({ userId });
 
@@ -123,14 +120,14 @@ export const editUserInfo: RequestHandler = async (req, res, next) => {
         return res.status(404).send('User not found');
       } else {
 
-        const { userId  }= req.params;
+        const { userId } = req.params;
 
-        const updatedUser: IUser = new User({
+        const updatedUser: Partial<IUser> = {
        
           password: req.body.password ? await hashPassword(req.body.password) : user.password,
           city_state: req.body.city_state || user.city_state,
           country: req.body.country || user.country
-      });
+      };
 
       console.log("req.body:", req.body);
       console.log("updatedUser:", updatedUser);
@@ -139,7 +136,7 @@ export const editUserInfo: RequestHandler = async (req, res, next) => {
         return res.status(404).send('Could not update user info');
       }
 
-      let result = await User.findByIdAndUpdate(userId, { $set: updatedUser })
+      let result = await User.findOneAndUpdate({ userId: userId}, updatedUser, { new: true })
       res.status(200).json(result);
     }
 

@@ -10,7 +10,7 @@ export const getAllPrayers: RequestHandler = async (req, res, next) => {
         let allReqs = await Prayer.find();
 
         if (allReqs.length === 0) {
-            return res.status(404).json({ message: 'No requests found.' });
+            return res.status(200).json({ message: 'No requests found - please add one.' });
         } else {
             
             return res.status(200).json(allReqs);

@@ -2,7 +2,7 @@ import mongoose, { Document, Model, model } from "mongoose";
 
 
 interface IUser extends Document {
-  userId: Number;
+  userId: number;
   username: string;
   password: string;
   city_state: string;
