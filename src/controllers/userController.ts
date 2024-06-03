@@ -2,6 +2,8 @@ import { RequestHandler } from "express";
 import { IUser, User } from "../models/user";
 import { comparePasswords, hashPassword, signUserToken, verifyUser } from "../services/auth";
 import mongoose from "mongoose";
+import { IPrayer, Prayer } from "../models/prayer";
+import {  ITestimony, Testimony } from "../models/testimony"
 
 
 export const register: RequestHandler = async (req, res, next) => {
@@ -165,3 +167,31 @@ export const deleteUser: RequestHandler = async (req, res, next) => {
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 }
+
+
+export const allPostsByUser: RequestHandler = async (req, res, next) => {
+  try {
+    const user: IUser | null = await verifyUser(req);
+      if (!user) {
+        return res.status(404).send('User not found');
+      } else {
+
+        const userId = req.params.postedBy;
+
+        const prayerByUser = await Prayer.find({ postedBy: userId }).exec();
+        const testyByUser = await Testimony.find({ postedBy: userId }).exec();
+
+        const userPosts = [...prayerByUser, ...testyByUser];
+      
+
+        if (userPosts.length > 0) {
+          return res.status(200).json({ userPosts });
+        } else {
+          return res.status(404).json({ message: 'No posts found for the given user.' });
+        }
+    }
+  } catch (error) {
+    console.error('Error fetching posts by user ID:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { allUsers, findUser, register, login, deleteUser, editUserInfo } from '../controllers/userController';
+import { allUsers, findUser, register, login, deleteUser, editUserInfo, allPostsByUser } from '../controllers/userController';
 
 
 const router = Router();
@@ -13,5 +13,7 @@ router.get('/:userId', findUser);
 
 router.put('/:userId', editUserInfo);
 router.delete('/:id', deleteUser);
+
+router.get('/posts/:postedBy', allPostsByUser);
 
 export default router;
