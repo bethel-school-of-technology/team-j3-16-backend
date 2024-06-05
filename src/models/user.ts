@@ -5,7 +5,8 @@ interface IUser extends Document {
   userId: number;
   username: string;
   password: string;
-  city_state: string;
+  place:string
+  region: string;
   country: string;
 
 }
@@ -25,7 +26,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  city_state: {
+  place: {
+    type: String,
+    required: true
+  },
+  region: {
     type: String,
     required: true
   },

@@ -10,7 +10,7 @@ import cors from 'cors';
 const app = express();
 const SERVER_PORT = 3000;
 
-const connectionString: string = 'mongodb://localhost:27017/testDB';
+const connectionString: string = 'mongodb://localhost:27017/prayerDB';
 
 mongoose.connect(connectionString).then(
     () => console.log('database connection successful!'), 

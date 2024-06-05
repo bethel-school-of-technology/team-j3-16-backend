@@ -17,13 +17,14 @@ export const register: RequestHandler = async (req, res, next) => {
         userId: allUsers.length + 1,
         username: req.body.username,
         password: await hashPassword(req.body.password),
-        city_state: req.body.city_state,
+        place: req.body.place,
+        region: req.body.region,
         country: req.body.country
     });
 
       // user must fill out all fields to be properly registered
-      if (!newUser.username || !newUser.password || !newUser.city_state || !newUser.country) {
-        return res.status(400).send('Username, password, city, and country are required');
+      if (!newUser.username || !newUser.password || !newUser.place || !newUser.region || !newUser.country) {
+        return res.status(400).send('Username, password, place, and country are required');
       }
 
       //if theres already a username that registered:
@@ -127,7 +128,8 @@ export const editUserInfo: RequestHandler = async (req, res, next) => {
         const updatedUser: Partial<IUser> = {
        
           password: req.body.password ? await hashPassword(req.body.password) : user.password,
-          city_state: req.body.city_state || user.city_state,
+          place: req.body.place || user.place,
+          region: req.body.region || user.region,
           country: req.body.country || user.country
       };
 
